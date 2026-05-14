@@ -972,6 +972,13 @@ header {
 <div class="toast" id="toast"></div>
 
 <script>
+// Desregistrar service workers anteriores que puedan interferir
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.getRegistrations().then(regs => {
+    regs.forEach(reg => reg.unregister());
+  });
+}
+
 /* ════════════════════════════════════════════════════════════
    SUPABASE INIT
 ══════════════════════════════════════════════════════════════ */
@@ -1009,6 +1016,7 @@ let labels       = loadLabels();
 let contacts     = loadContacts();
 let notifEnabled = localStorage.getItem(NOTIF_PERM_KEY) === 'granted';
 let sharePayload = null;
+let appInitialized = false;
 
 /* ════════════════════════════════════════════════════════════
    AUTH — LOGIN / LOGOUT
@@ -1036,22 +1044,17 @@ document.getElementById('login-password').addEventListener('keydown', e => {
   if (e.key === 'Enter') doLogin();
 });
 
-/* ════════════════════════════════════════════════════════════
-   AUTH STATE CHANGE — manejar login/logout en vivo
-══════════════════════════════════════════════════════════════ */
-sb.auth.onAuthStateChange(async (event, session) => {
-  if (event === 'SIGNED_IN' && !currentUser) {
-    currentUser = session.user;
-    await loadProfile();
-    await initApp();
-  }
+sb.auth.onAuthStateChange((event, session) => {
   if (event === 'SIGNED_OUT') {
     currentUser = null; currentProfile = null; isAdmin = false;
     document.getElementById('app-shell').style.display = 'none';
     showLoginScreen();
   }
+  if (event === 'SIGNED_IN' && !currentUser) {
+    currentUser = session.user;
+    loadProfile().then(() => initApp());
+  }
 });
-
 async function loadProfile() {
   const { data } = await sb.from('profiles').select('*').eq('id', currentUser.id).single();
   currentProfile = data;
@@ -1063,6 +1066,8 @@ async function loadProfile() {
    INIT APP
 ══════════════════════════════════════════════════════════════ */
 async function initApp() {
+  if (appInitialized) return;
+  appInitialized = true;
   document.getElementById('loading-overlay').style.display = 'none';
   document.getElementById('login-screen').style.display    = 'none';
   const shell = document.getElementById('app-shell');
