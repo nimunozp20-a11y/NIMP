@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=contain">
 <meta name="theme-color" content="#c0627a">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -41,8 +41,11 @@
 
 /* ─── Reset ─────────────────────────────────────────────── */
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-html, body { overflow-x: hidden; width: 100%; max-width: 100%; position: relative; }
-#app-shell { overflow-x: hidden; width: 100%; }
+/* Prevent ANY element from causing horizontal overflow */
+body * { max-width: 100%; }
+html { box-sizing: border-box; overflow-x: hidden; }
+body { overflow-x: hidden; width: 100%; }
+#app-shell { width: 100%; overflow-x: hidden; }
 button, input, textarea, select { font: inherit; }
 button:focus-visible, input:focus-visible,
 textarea:focus-visible, select:focus-visible {
@@ -211,10 +214,10 @@ body {
 /* ─── Header ─────────────────────────────────────────────── */
 header {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 16px 36px; gap: 16px;
+  padding: 16px 20px; gap: 10px;
   background: var(--surface); border-bottom: 1px solid var(--border);
   box-shadow: 0 2px 12px rgba(192,98,122,0.07);
-  width: 100%; box-sizing: border-box; overflow: hidden;
+  width: 100%; box-sizing: border-box; min-width: 0;
 }
 .logo { display: flex; align-items: center; gap: 12px; }
 .logo-icon {
@@ -245,8 +248,8 @@ header {
 .mobile-panel-btn { display: none; }
 
 /* ─── Layout ─────────────────────────────────────────────── */
-.app { display: grid; grid-template-columns: 1fr 390px; flex: 1; height: calc(100vh - 71px); }
-.cal-side { padding: 28px 36px; overflow-y: auto; border-right: 1px solid var(--border); }
+.app { display: grid; grid-template-columns: 1fr 390px; flex: 1; height: calc(100vh - 71px); width: 100%; overflow-x: hidden; }
+.cal-side { padding: 28px 20px; overflow-y: auto; overflow-x: hidden; border-right: 1px solid var(--border); min-width: 0; }
 
 /* ─── Calendar nav ───────────────────────────────────────── */
 .cal-nav { display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; gap:12px; flex-wrap:wrap; }
