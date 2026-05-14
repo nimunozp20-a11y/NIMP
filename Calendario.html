@@ -573,8 +573,18 @@ header {
   .mobile-panel-btn { display:block; }
 }
 @media (max-width:620px) {
-  header { padding:12px 16px; }
-  .cal-side { padding:16px; }
+  header { padding:8px 12px; flex-wrap:wrap; gap:8px; }
+  .logo-icon { width:32px; height:32px; font-size:15px; }
+  .logo-script { font-size:22px; }
+  .logo-sub { font-size:9px; letter-spacing:1.5px; }
+  .header-meta { display:none; }
+  .header-user-info { gap:6px; }
+  .header-user-name { font-size:11px; max-width:80px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .header-admin-btn { padding:5px 8px; font-size:11px; }
+  .header-logout-btn { padding:5px 8px; font-size:11px; }
+  .mobile-panel-btn { padding:5px 8px; font-size:11px; }
+  .nav-btn { padding:5px 10px; font-size:12px; }
+  .cal-side { padding:12px; }
   .cal-nav { flex-direction:column; align-items:flex-start; }
   .cal-grid, .cal-weekdays { gap:3px; }
   .wday { font-size:10px; letter-spacing:.4px; padding:4px 0; }
@@ -586,9 +596,13 @@ header {
   .form-row { flex-direction:column; gap:8px; }
   .form-time, .form-select { width:100%; }
   .form-textarea { height:62px; }
-  .type-chip, .filter-chip { padding:7px 10px; }
+  .type-chip, .filter-chip { padding:5px 9px; font-size:11px; }
+  .utility-btn { padding:5px 9px; font-size:11px; }
   .modal { padding:20px 16px; }
   .login-card { padding:28px 20px; }
+  .user-sel-label { font-size:10px; }
+  .user-sel-chip { padding:4px 10px; font-size:11px; }
+  #user-selector-bar { padding:6px 12px; }
 }
 @media (max-width:380px) {
   .cal-side { padding-left:8px; padding-right:8px; }
