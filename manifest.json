@@ -1,25 +1,17 @@
 {
-  "name": "NIMP Suite",
-  "short_name": "NIMP",
-  "description": "Herramienta para cálculos eléctricos.",
-  "start_url": "/NIMP/",
-  "scope": "/NIMP/",
+  "name": "Mi Calendario",
+  "short_name": "Calendario",
+  "description": "Agenda personal - Tu calendario privado",
+  "start_url": "./CalendarioV2.html",
+  "scope": "./",
   "display": "standalone",
-  "background_color": "#0b1f36",
-  "theme_color": "#0b1f36",
-  "orientation": "portrait",
+  "background_color": "#fdf8f5",
+  "theme_color": "#c0627a",
+  "orientation": "portrait-primary",
+  "lang": "es",
+  "categories": ["productivity","lifestyle"],
   "icons": [
-    {
-      "src": "icons/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "icons/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
-    }
+    { "src": "./icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "./icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ]
 }
