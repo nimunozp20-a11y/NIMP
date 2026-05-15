@@ -1072,10 +1072,27 @@ function copyShareLink() {
 function downloadQR() {
   const canvas = document.querySelector('#qr-canvas canvas');
   if (!canvas) return;
-  const a = document.createElement('a');
-  a.href     = canvas.toDataURL('image/png');
-  a.download = 'mi-evento-qr.png';
-  a.click();
+  const dataUrl = canvas.toDataURL('image/png');
+  const isAndroid = /android/i.test(navigator.userAgent);
+  if (isAndroid) {
+    // Show QR image in a new tab or share it
+    if (navigator.share) {
+      canvas.toBlob(blob => {
+        const file = new File([blob], 'qr-evento.png', {type:'image/png'});
+        navigator.share({title:'QR Evento', files:[file]}).catch(()=>{
+          showToast('Mantén presionada la imagen para guardarla');
+        });
+      });
+    } else {
+      const w = window.open();
+      w.document.write(`<img src="${dataUrl}" style="max-width:100%"><br><p>Mantén presionada la imagen para guardarla</p>`);
+    }
+  } else {
+    const a = document.createElement('a');
+    a.href     = dataUrl;
+    a.download = 'mi-evento-qr.png';
+    a.click();
+  }
 }
 
 function nativeShare() {
@@ -1756,11 +1773,37 @@ function closePanel() { document.getElementById('panel').classList.remove('mobil
 ══════════════════════════════════════════════════════════════ */
 function exportNotes() {
   const payload = JSON.stringify({exportedAt:new Date().toISOString(),notes},null,2);
-  const blob    = new Blob([payload],{type:'application/json'});
-  const url     = URL.createObjectURL(blob);
-  const a       = document.createElement('a');
-  a.href=url; a.download=`calendario-${todayKey()}.json`; a.click();
-  URL.revokeObjectURL(url);
+  // Detect Android WebView / GoNative where download doesn't work
+  const isAndroid = /android/i.test(navigator.userAgent);
+  if (isAndroid) {
+    // Show the data in a modal so user can copy or share
+    const existing = document.getElementById('export-modal-android');
+    if (existing) existing.remove();
+    const overlay = document.createElement('div');
+    overlay.id = 'export-modal-android';
+    overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(61,37,48,.6);display:flex;align-items:center;justify-content:center;padding:20px';
+    overlay.innerHTML = `
+      <div style="background:#fff;border-radius:16px;padding:22px;max-width:400px;width:100%;max-height:85vh;display:flex;flex-direction:column;gap:12px">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600">📤 Exportar datos</div>
+        <div style="font-size:12px;color:#9b7b88">Copia este texto y guárdalo en un bloc de notas, o compártelo por WhatsApp para hacer un respaldo.</div>
+        <textarea style="flex:1;min-height:200px;font-size:10px;font-family:monospace;padding:10px;border:1px solid #f0ddd8;border-radius:8px;resize:none;background:#fdf8f5" readonly>${payload}</textarea>
+        <div style="display:flex;gap:8px">
+          <button onclick="navigator.clipboard.writeText(${JSON.stringify(payload)}).then(()=>showToast('✓ Copiado al portapapeles'))" 
+            style="flex:1;padding:11px;background:#c0627a;color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer">📋 Copiar</button>
+          <button onclick="navigator.share&&navigator.share({title:'Respaldo Calendario',text:${JSON.stringify(payload)}})" 
+            style="flex:1;padding:11px;background:#7a9e8e;color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer">↗ Compartir</button>
+        </div>
+        <button onclick="document.getElementById('export-modal-android').remove()" 
+          style="padding:10px;border:1.5px solid #f0ddd8;background:transparent;border-radius:10px;font-size:13px;font-weight:700;color:#9b7b88;cursor:pointer">Cerrar</button>
+      </div>`;
+    document.body.appendChild(overlay);
+  } else {
+    const blob = new Blob([payload],{type:'application/json'});
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href=url; a.download=`calendario-${todayKey()}.json`; a.click();
+    URL.revokeObjectURL(url);
+  }
 }
 function importNotes(event) {
   const file=event.target.files[0]; if (!file) return;
